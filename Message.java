@@ -17,4 +17,12 @@ public class Message {
       this.content = content;
    }
    
+   public String getCommand() {
+      return command;
+   }
+   
+   public Object getContent() {
+      return content;
+   }
+   
 }

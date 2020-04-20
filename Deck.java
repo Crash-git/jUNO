@@ -56,7 +56,11 @@ public class Deck {
    public Card shuffle(boolean saveTop) throws CloneNotSupportedException {
       Card topCard = null;
       if(saveTop) {
-         topCard = (Card)cards.get(0).clone();
+         try {
+            topCard = (Card)cards.get(0).clone();
+         } catch (CloneNotSupportedException e) {
+               e.printStackTrace();
+         }
          cards.remove(0);
       }
       Collections.shuffle(cards);
@@ -69,10 +73,28 @@ public class Deck {
      * draw - draw a card from the top of the deck
      * @return Card - Topmost card of deck
      */
-   public Card draw() throws CloneNotSupportedException {
-      Card topCard = (Card)cards.get(0).clone();
+   public Card draw() {
+      Card topCard = null;
+      try {
+         topCard = (Card)cards.get(0).clone();
+      } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+      }
       cards.remove(0);
       return topCard;
+   }
+   /**
+     * verify - Verify if a card can be played on the top of a deck
+     */
+   public boolean verify(Card card) {
+      Card topCard = cards.get(0);
+      //Wild card, can always be played
+      if(card.getColor() == 'X') {
+         return true;
+      } else if(card.getColor() == topCard.getColor() || card.getValue() == topCard.getValue()) {
+         return true;
+      }
+      return false;
    }
    /**
      * insert - Insert a new card, adding it to the top of the deck
@@ -87,7 +109,7 @@ public class Deck {
    public void deal(Player[] players) {
       for(Player p: players) {
          for(int i = 0; i < 7; i++) {
-            p.addCard(this.draw());
+            p.add(this.draw());
          }
       }
    }
@@ -97,7 +119,19 @@ public class Deck {
      */
    public void deal(Player player) {
       for(int i = 0; i < 7; i++) {
-         player.addCard(this.draw());
+         player.add(this.draw());
       }
+   }
+   /**
+     * getCards  - Return the card deck
+     */
+   public ArrayList<Card> getCards() {
+      return cards;
+   }
+   /**
+     * setCards  - Set the card deck
+     */
+   public void setCards(ArrayList<Card> cards) {
+      this.cards = cards;
    }
 }

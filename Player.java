@@ -67,6 +67,14 @@ public class Player {
    }
    
    /**
+     * setName - Sets player display name
+     * @param string - name
+     */
+   public void setName(String name) {
+      this.name = name;
+   }
+   
+   /**
      * getTurn - Sees if it's this player's turn or not
      * @returns boolean - isTurn
      */
@@ -83,6 +91,14 @@ public class Player {
    }
    
    /**
+     * getName - Gets player display name
+     * @returns string - name
+     */
+   public String getName() {
+      return name;
+   }
+   
+   /**
      * getHandSize - Get the size (remaining cards) of a player's hand
      * @returns int - Size of hand
      */
@@ -91,12 +107,25 @@ public class Player {
    }
    
    /**
+     * getHand - Get the player's hand
+     * @returns Cards - hand
+     */
+   public ArrayList<Card> getHand() {
+      return hand;
+   }
+   
+   /**
      * play - Play a card, removing it from the player's hand and returning it
      * @param index - Index of the card in the hand
      * @returns Card - Card selected
      */
-   public Card play(int index) throws CloneNotSupportedException {
-       Card playedCard = (Card)hand.get(index).clone();
+   public Card play(int index) {
+       Card playedCard = null;
+       try {
+         playedCard = (Card)hand.get(index).clone();
+       } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+       }
        hand.remove(index);
        return playedCard;
    }

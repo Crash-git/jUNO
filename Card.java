@@ -18,6 +18,12 @@ public class Card implements Cloneable {
       this.color = color;
    }
    /**
+     * setColor - Set the card's color (In case of wild)
+     */
+   public void setColor(char color) {
+      this.color = color;
+   }
+   /**
      * getColor - Get the card's color
      */
    public char getColor() {

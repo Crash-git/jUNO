@@ -90,4 +90,11 @@ class ServerClient extends Thread {
          }
          return true;
       }
-   }
+      
+      /**
+        * getPlayer - Get player
+        */
+      public Player getPlayer() {
+         return p;
+      }
+}
