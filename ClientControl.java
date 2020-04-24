@@ -424,16 +424,20 @@ public class ClientControl extends JFrame {
             this.REFHAND = hand;
          }
          public void run() {
-            cardNames.clear();
-            try{sleep(100);}catch(InterruptedException ie){}
-            for(int i = 0; i < REFHAND.size(); i++) {
-               cardNames.add(i,REFHAND.get(i));
-               try{sleep(10);}catch(InterruptedException ie){}
-            }
-            try{sleep(100);}catch(InterruptedException ie){}
-            jlistHand.setModel(cardNames);
-            synchronized("") {
-               hmanBusy = false;
+            try {
+               cardNames.clear();
+               try{sleep(100);}catch(InterruptedException ie){}
+               for(int i = 0; i < REFHAND.size(); i++) {
+                  cardNames.add(i,REFHAND.get(i));
+                  try{sleep(10);}catch(InterruptedException ie){}
+               }
+               try{sleep(100);}catch(InterruptedException ie){}
+               jlistHand.setModel(cardNames);
+            } catch(NullPointerException idgaf) {
+            } finally {
+               synchronized("") {
+                  hmanBusy = false;
+               }
             }
          }
       }
