@@ -1,11 +1,13 @@
 import java.util.ArrayList;
+import java.io.Serializable;
 
 /**
   * Player - manages a player, and their hand
   * @author - ngiano
   * @version 4.6.20
   */
-public class Player {
+
+public class Player implements Serializable {
    private String name;
    private ArrayList<Card> hand;
    private boolean isTurn = false;
@@ -115,6 +117,14 @@ public class Player {
    }
    
    /**
+     * setHand - Set the player's hand
+     * @param Cards - hand
+     */
+   public void setHand(ArrayList<Card> hand) {
+      this.hand = hand;
+   }
+   
+   /**
      * play - Play a card, removing it from the player's hand and returning it
      * @param index - Index of the card in the hand
      * @returns Card - Card selected
@@ -136,5 +146,6 @@ public class Player {
      */
    public void add(Card card) {
       hand.add(card);
+      System.out.println("PLAYER ADDED CARD "+card);
    }
 }

@@ -4,8 +4,10 @@
   * @author - ngiano
   * @version 4.3.20
   */
+import java.util.*;
+import java.io.Serializable;
 
-public class Card implements Cloneable {
+public class Card implements Cloneable, Comparable, Serializable {
    int value;
    char color; // (R)ed (B)lue (G)reen (Y)ellow (X)Wild
    /**
@@ -106,6 +108,31 @@ public class Card implements Cloneable {
             break;
       }
       return retStr;
+   }
+   /**
+     * compareTo - Used for sorting
+     */
+   public int compareTo(Object comparableO) {
+      Card comparable = (Card)comparableO;
+      ArrayList<Character> colorOrder = new ArrayList<Character>();
+      colorOrder.add('R');
+      colorOrder.add('Y');
+      colorOrder.add('G');
+      colorOrder.add('B');
+      colorOrder.add('X');
+      if(colorOrder.indexOf(comparable.getColor()) < colorOrder.indexOf(this.getColor())) {
+         return 1;
+      } else if (colorOrder.indexOf(comparable.getColor()) > colorOrder.indexOf(this.getColor())) {
+         return -1;
+      } else {
+         if(comparable.getValue() < this.getValue()) {
+            return 1;
+         } else if (comparable.getValue() > this.getValue()) {
+            return -1;
+         } else {
+            return 0;
+         }
+      }
    }
    public Object clone() throws CloneNotSupportedException {
       return super.clone();

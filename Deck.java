@@ -1,12 +1,14 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
+import java.io.Serializable;
 
 /**
   * Deck - Manages decks of cards.
   * @author - ngiano
   * @version 4.3.20
   */
-public class Deck {
+public class Deck implements Serializable,Cloneable {
    private ArrayList<Card> cards;
    /**
      * Deck constructor for decks pre-populated with 102 cards
@@ -53,11 +55,12 @@ public class Deck {
      * @param saveTop - Save the topmost card, excluding it from the suffle and giving it. Used for recycling the discard pile
      * @return Card - Topmost card of deck
      */
-   public Card shuffle(boolean saveTop) throws CloneNotSupportedException {
+   public Card shuffle(boolean saveTop) {
       Card topCard = null;
       if(saveTop) {
+         Random r = new Random();
          try {
-            topCard = (Card)cards.get(0).clone();
+            topCard = (Card)cards.get(r.nextInt(cards.size())).clone();
          } catch (CloneNotSupportedException e) {
                e.printStackTrace();
          }
@@ -134,4 +137,8 @@ public class Deck {
    public void setCards(ArrayList<Card> cards) {
       this.cards = cards;
    }
+   
+   public Object clone() throws CloneNotSupportedException {
+      return super.clone();
+   } 
 }
