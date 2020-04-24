@@ -411,21 +411,23 @@ public class ClientControl extends JFrame {
       }
       public void refresh() {
          if(!hmanBusy) {
-            RefreshHMAN t = new RefreshHMAN(jlistHand);
+            RefreshHMAN t = new RefreshHMAN(jlistHand, hand);
             t.start();
             hmanBusy = true;
          }
       }
       private class RefreshHMAN extends Thread {
-         JList jlistHand;
-         public RefreshHMAN(JList jlistHand) {
+         private JList jlistHand;
+         private final ArrayList<Card> REFHAND;
+         public RefreshHMAN(JList jlistHand, ArrayList<Card> hand) {
             this.jlistHand = jlistHand;
+            this.REFHAND = hand;
          }
          public void run() {
             cardNames.clear();
             try{sleep(100);}catch(InterruptedException ie){}
-            for(int i = 0; i < hand.size(); i++) {
-               cardNames.add(i,hand.get(i));
+            for(int i = 0; i < REFHAND.size(); i++) {
+               cardNames.add(i,REFHAND.get(i));
                try{sleep(10);}catch(InterruptedException ie){}
             }
             try{sleep(100);}catch(InterruptedException ie){}
