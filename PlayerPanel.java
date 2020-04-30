@@ -18,4 +18,12 @@ public class PlayerPanel extends JPanel {
       jlName.setText(p.getName());
       jlHandSize.setText("Hand: "+p.getHandSize());
    }
+   public void setPlayer(Player p) {
+      jlName.setText(p.getName());
+      jlHandSize.setText("Hand: "+p.getHandSize());
+   }
+   public void setPlayer() {
+      jlName.setText("");
+      jlHandSize.setText("");
+   }
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
   * @author - ngiano
   * @version 4.3.20
   */
-public class Deck implements Serializable,Cloneable {
+public class Deck implements Serializable {
    private ArrayList<Card> cards;
    /**
      * Deck constructor for decks pre-populated with 102 cards
@@ -137,8 +137,5 @@ public class Deck implements Serializable,Cloneable {
    public void setCards(ArrayList<Card> cards) {
       this.cards = cards;
    }
-   
-   public Object clone() throws CloneNotSupportedException {
-      return super.clone();
-   } 
+  
 }

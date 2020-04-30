@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
-public class Chat extends JPanel {
+public class ChatPanel extends JPanel {
    private JTextArea chat;
    private JTextField chatInput;
    private JButton send;
@@ -18,8 +18,10 @@ public class Chat extends JPanel {
    private JPanel chatCombined;
 
    private String username;
-
-   public Chat(String _username) {
+   public static void main(String[]args) {
+      new ChatPanel("T");
+   }
+   public ChatPanel(String _username) {
         setLayout(new BorderLayout());
 
         username = _username;
@@ -37,20 +39,22 @@ public class Chat extends JPanel {
         //     send.setEnabled(true);
         //     }
         // });
-
-        chatInput = new JTextField(14);
-        chat = new JTextArea(30, 50);
+        JPanel sendBar = new JPanel();
+        sendBar.setLayout(new BoxLayout(sendBar,BoxLayout.X_AXIS));
+        chatInput = new JTextField(15);
+        sendBar.add(chatInput);
+        sendBar.add(send);
+        
+        chat = new JTextArea();
         chat.setEditable(false);
 
         scroll = new JScrollPane(chat, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         chatCombined.setLayout(new BorderLayout(5, 5));
-        chatCombined.add(scroll, BorderLayout.NORTH);
-        chatCombined.add(chatInput, BorderLayout.CENTER);
-        chatCombined.add(send, BorderLayout.SOUTH);
+        chatCombined.add(scroll, BorderLayout.CENTER);
+        chatCombined.add(sendBar, BorderLayout.SOUTH);
 
         add(chatCombined, BorderLayout.CENTER);
-
         // sendMessage(username + " connected");
     }
    

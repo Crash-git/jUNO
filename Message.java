@@ -15,7 +15,6 @@ public class Message implements Serializable {
    public Message(String command) {
       this.command = command;
       this.content = null;
-      System.out.println("MESSAGE "+command);
    }
    /**
      * Message - Construct a new message
@@ -24,31 +23,7 @@ public class Message implements Serializable {
      */
    public Message(String command, Object content) {
       this.command = command;
-      if(content instanceof String) {
-         String s = (String)content;
-         s.concat("");
-         this.content = s;
-         System.out.println(s);
-      }
-      else if(content instanceof Deck) {
-         Deck d = (Deck)content;
-         try {
-            this.content = d.clone();
-         } catch(CloneNotSupportedException cnse) {}
-      }
-      else if(content instanceof Card) {
-         Card c = (Card)content;
-         try {
-            this.content = c.clone();
-         } catch(CloneNotSupportedException cnse) {}
-      }
-      else if(content instanceof ArrayList) {
-         ArrayList c = (ArrayList)content;
-         this.content = c.clone();
-      } else {
-         this.content = content;
-      }
-      System.out.println("MESSAGE "+command+" "+content.getClass());
+      this.content = content;
    }
    
    /**
@@ -59,31 +34,8 @@ public class Message implements Serializable {
      */
    public Message(String command, Object content, Object moreContent) {
       this.command = command;
-      if(content instanceof String) {
-         String s = (String)content;
-         s.concat("");
-         this.content = s;
-      }
-      else if(content instanceof Deck) {
-         Deck d = (Deck)content;
-         try {
-            this.content = d.clone();
-         } catch(CloneNotSupportedException cnse) {}
-      }
-      else if(content instanceof Card) {
-         Card c = (Card)content;
-         try {
-            this.content = c.clone();
-         } catch(CloneNotSupportedException cnse) {}
-      }
-      else if(content instanceof ArrayList) {
-         ArrayList c = (ArrayList)content;
-         this.content = c.clone();
-      } else {
-         this.content = content;
-      }
+      this.content = content;
       this.moreContent = moreContent;
-      System.out.println("MESSAGE "+command+" "+content.getClass());
    }
    
    public String getCommand() {

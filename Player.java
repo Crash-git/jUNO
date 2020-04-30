@@ -123,6 +123,9 @@ public class Player implements Serializable {
    public void setHand(ArrayList<Card> hand) {
       this.hand = hand;
    }
+   public void setHand() {
+      this.hand = new ArrayList<Card>();
+   }
    
    /**
      * play - Play a card, removing it from the player's hand and returning it
@@ -148,4 +151,5 @@ public class Player implements Serializable {
       hand.add(card);
       System.out.println("PLAYER ADDED CARD "+card);
    }
+   
 }

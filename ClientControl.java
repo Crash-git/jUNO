@@ -7,35 +7,47 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock; 
 
 public class ClientControl extends JFrame {
+   //GUI
+   private JFrame frame;
    private HandManager hMan;
    private JList jlistHand;
    private JButton jbPlayCard, jbTest2;
-   private ClientCommunicator cc;
-   private DeckPanel dPan;
-   private Player p = new Player("Greg");
-   private ArrayList<Player> userList;
    private PlayerPanel playerPanelA, playerPanelB, playerPanelC;
    private PlayerListPanel plp;
+   private DeckPanel dPan;
+   //Core
+   private ClientCommunicator cc;
+   private Player p = new Player("Greg");
+   private ArrayList<Player> userList = new ArrayList<Player>();
+   //Chat
+   private JTabbedPane chatTabs;
+   private ArrayList<ChatPanel> chatPanels = new ArrayList<ChatPanel>();
+   
    public static void main(String[] args) {
       new ClientControl();
    }
+   
    public ClientControl() {
       super("jUNO Client");
+      frame = this;
       setLayout(new BoxLayout(getContentPane(),BoxLayout.X_AXIS));
+      JPanel sidebar = new JPanel(new GridLayout(2,1));
       plp = new PlayerListPanel();
-      add(plp);
+      chatTabs = new JTabbedPane();
+      sidebar.add(plp);
+      sidebar.add(chatTabs);
+      sidebar.setMinimumSize(new Dimension(250,100));
+      sidebar.setMaximumSize(new Dimension(250,1920));
+      sidebar.setPreferredSize(new Dimension(250,600));
       //MAIN LAYOUT CONSTRUCT
       JPanel mainLayout = new JPanel(new GridLayout(3,0));
       JPanel jpRow1 = new JPanel(new GridLayout(0,3));
       JPanel jpRow2 = new JPanel(new GridLayout(0,3));
       JPanel jpHand = new JPanel(new GridLayout(0,1));
-      //TEST1
-      JButton jbTest = new JButton("TEST HMAN");
-      //TEST1
-      jpRow1.add(jbTest);
+      jpRow1.add(new JButton("Uno"));
       playerPanelB = new PlayerPanel(new Player("PLAYER B"));
       jpRow1.add(playerPanelB);
-      jbTest2 = new JButton("TEST2");
+      jbTest2 = new JButton("Callout");
       jpRow1.add(jbTest2);
       playerPanelA = new PlayerPanel(new Player("PLAYER A"));
       jpRow2.add(playerPanelA);
@@ -48,49 +60,11 @@ public class ClientControl extends JFrame {
       mainLayout.add(jpRow1);
       mainLayout.add(jpRow2);
       mainLayout.add(jpHand);
-      //TEST1
-      jbTest.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent ae) {
-            ArrayList<Card> testHand = new ArrayList<Card>();
-            testHand.add(new Card(-5,'X'));
-            testHand.add(new Card(-4,'X'));
-            testHand.add(new Card(5,'R'));
-            testHand.add(new Card(6,'R'));
-            testHand.add(new Card(4,'R'));
-            testHand.add(new Card(9,'G'));
-            testHand.add(new Card(3,'R'));
-            testHand.add(new Card(-5,'X'));
-            testHand.add(new Card(-4,'X'));
-            testHand.add(new Card(5,'R'));
-            testHand.add(new Card(6,'R'));
-            testHand.add(new Card(4,'R'));
-            testHand.add(new Card(9,'G'));
-            testHand.add(new Card(3,'R'));
-            testHand.add(new Card(-5,'X'));
-            testHand.add(new Card(-4,'X'));
-            testHand.add(new Card(5,'R'));
-            testHand.add(new Card(6,'R'));
-            testHand.add(new Card(4,'R'));
-            testHand.add(new Card(9,'G'));
-            testHand.add(new Card(3,'R'));
-            Player p1 = new Player("Steven");
-            Player p2 = new Player("Greg");
-            Player p3 = new Player("Tim");
-            ArrayList<Player> plist = new ArrayList<Player>();
-            plist.add(p);
-            plist.add(p1);
-            plist.add(p2);
-            plist.add(p3);
-            plp.setList(plist);
-            p.setHand(testHand);
-            hMan.setHand(testHand);
-         }
-      });
-      //TEST1
-      //Sidebar
-      add(new JPanel());
+
+
       add(mainLayout);
-      setSize(500,300);
+      add(sidebar);
+      pack();
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       setVisible(true);
       try {
@@ -115,7 +89,7 @@ public class ClientControl extends JFrame {
      */
    public class AlertClearer extends TimerTask {
       public void run() {
-         hMan.setAlert("");
+         hMan.clearAlert();
       }
    }
    
@@ -128,24 +102,25 @@ public class ClientControl extends JFrame {
       plp.setList(players);
       switch(players.size()) {
          case 1:
-            playerPanelA = new PlayerPanel();
-            playerPanelB = new PlayerPanel();
-            playerPanelC = new PlayerPanel();
+            System.out.println("I should go!");
+            playerPanelA.setPlayer();
+            playerPanelB.setPlayer();
+            playerPanelC.setPlayer();
             break;
          case 2:
-            playerPanelA = new PlayerPanel();
-            playerPanelB = new PlayerPanel(players.get(1));
-            playerPanelC = new PlayerPanel();
+            playerPanelA.setPlayer();
+            playerPanelB.setPlayer(players.get(1));
+            playerPanelC.setPlayer();
             break;
          case 3:
-            playerPanelA = new PlayerPanel(players.get(2));
-            playerPanelB = new PlayerPanel();
-            playerPanelC = new PlayerPanel(players.get(1));
+            playerPanelA.setPlayer(players.get(1));
+            playerPanelB.setPlayer();
+            playerPanelC.setPlayer(players.get(2));
             break;
          case 4:
-            playerPanelA = new PlayerPanel(players.get(3));
-            playerPanelB = new PlayerPanel(players.get(2));
-            playerPanelC = new PlayerPanel(players.get(1));
+            playerPanelA.setPlayer(players.get(1));
+            playerPanelB.setPlayer(players.get(2));
+            playerPanelC.setPlayer(players.get(3));
             break;
       }
       playerPanelA.revalidate();
@@ -185,6 +160,7 @@ public class ClientControl extends JFrame {
                }
             }
             p = new Player(name);
+            frame.setTitle("jUNO Client - "+name);
          } catch (IOException ioe) {
             System.out.println("IO error in initiating client");
          } catch (Exception e) {
@@ -193,23 +169,19 @@ public class ClientControl extends JFrame {
          this.socket = socket;
          
          //Activate actions in deck panel
-         JButton[] buttons = dPan.getButtons();
-         buttons[0].addActionListener(new ActionListener() {
+         JButton button = dPan.getButton();
+         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                sendOut(new Message("DRAW"));
-            } 
-         });
-         buttons[1].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-               sendOut(new Message("END"));
-               p.setTurn(false);
-               hMan.setPlay(false);
             } 
          });
          //Activate things in HMAN
          jbPlayCard.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-               if(p.getTurn()) {
+               if(jlistHand.isSelectionEmpty()) {
+                  JOptionPane.showMessageDialog(null,"You need to select a card");
+               } else if(p.getTurn()) {
+                  hMan.setLastCardPlayed((Card)jlistHand.getSelectedValue());
                   sendOut(new Message("PLAY",jlistHand.getSelectedValue()));
                }
             }
@@ -223,9 +195,7 @@ public class ClientControl extends JFrame {
       }
             
       public void run() {
-         System.out.println("run");
          while (true) {
-            System.out.println("Ready for next message");
             Message msg = null;
             try {
                msg = (Message) in.readObject();
@@ -235,19 +205,67 @@ public class ClientControl extends JFrame {
                System.out.println("Message class not found");
             }
             String command = msg.getCommand();
-            System.out.println(command);
             //*** INBOUND COMMANDS ***
             switch(command) {
+               case "CHAT":
+                  //Process objects
+                  String sendee = (String)msg.getContent();
+                  String message = (String)msg.getMoreContent();
+                  //Execute
+                  System.out.println("chat "+sendee+" "+message);
+                  boolean chatMatch = false;
+                  for(ChatPanel chatP: chatPanels) {
+                     if(chatP.getUsername().equals(sendee)) {
+                        //add line to chat panel
+                        chatP.updateChat(message);
+                        chatMatch = true;
+                     }
+                  }
+                  if(!chatMatch) {
+                     //create a new chat panel
+                     ChatPanel chP = new ChatPanel(sendee);
+                     chP.updateChat("Start of new chat with "+sendee+" ======");
+                     chP.updateChat(message);
+                     JButton sendButton = chP.getSendReference();
+                     if(sendee.equals("GAMELOG")) {
+                        sendButton.setEnabled(false);
+                     }
+                     sendButton.addActionListener(new ActionListener(){
+                        public void actionPerformed(ActionEvent ae) {
+                           String input = chP.readInput();
+                           //Direct message
+                           if(input.indexOf("/w ") == 0) {
+                              String tempTarget = input.substring(3);
+                              String tempInput = tempTarget.substring(tempTarget.indexOf(" ")+1);
+                              tempTarget = tempTarget.substring(0,tempTarget.indexOf(" "));
+                              if(tempTarget.equals(p.getName())) {
+                                 chP.updateChat("You cannot send a message to yourself");
+                              } else {
+                                 boolean targetFound = false;
+                                 for(Player p: userList) {
+                                    if(p.getName().equals(tempTarget)) {
+                                       sendOut(new Message("CHAT",tempTarget,tempInput));
+                                       targetFound = true;
+                                    }
+                                 }
+                                 if(!targetFound) {
+                                    chP.updateChat("Failed to send: There is no player by the username "+tempTarget);
+                                 }
+                              }
+                           } else {
+                              sendOut(new Message("CHAT",sendee,input));
+                           }
+                        }
+                     });
+                     chatPanels.add(chP);
+                     chatTabs.addTab(sendee,chP);
+                  }
+                  break;
                case "TURN"://TURN - ASSOCIATED OBJECT: ArrayList<Card>
                   //It's now this client's turn, allow playing/drawingcards
                   //Server delivers hand, in case of any desync
-                  //Process object
-                  ArrayList<Card> hand = (ArrayList<Card>)msg.getContent();
                   //Execute
-                  hMan.setAlert("It's your turn");
                   p.setTurn(true);
-                  System.out.println("turnhand"+hand);
-                  hMan.setHand(hand);
                   hMan.setPlay(true);
                   sendOut(new Message("UPDATE"));
                   break;
@@ -278,14 +296,20 @@ public class ClientControl extends JFrame {
                   //Send back to server the selected color
                   String[] options = new String[] {"Red", "Yellow", "Green", "Blue"};
                   int response = JOptionPane.showOptionDialog(null, "Select what color", "Played a WILD card",JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,null, options, options[0]);
+                  while(response == JOptionPane.CLOSED_OPTION) {
+                     response = JOptionPane.showOptionDialog(null, "You must select what color", "Played a WILD card",JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,null, options, options[0]);
+                  }
                   char[] colorOrder = new char[]{'R','Y','G','B'};
                   sendOut(new Message("COLORP",colorOrder[response]));
                   break;
                case "UPDATEALL"://RECIEVE UPDATE - ASSOCIATED OBJECT: Player[]???
                   //Update all players, names and card counts
+                  System.out.println("UPDATEALL TIME!");
                   ArrayList<Player> updateAllPlayerList = (ArrayList<Player>)msg.getContent();
+                  userList = updateAllPlayerList;
                   Player me = null;
                   for(int i = 0; i < updateAllPlayerList.size(); i++) {
+                     System.out.println(updateAllPlayerList.get(i).getName() + " ("+updateAllPlayerList.get(i).getHandSize()+")");
                      if(updateAllPlayerList.get(i).getName().equals(p.getName())) {
                         me = updateAllPlayerList.get(i);
                      }
@@ -306,13 +330,17 @@ public class ClientControl extends JFrame {
                   }
                   try {
                      updatePlayerCards(updateAllPlayerList);
-                  } catch (NullPointerException npe) {}//Dont know why it happens
+                  } catch (Exception e) {
+                     System.out.println(e);
+                  }//Dont know why it happens
                   break;
                case "PILE"://UPDATE DISCARD PILE - ASSOCIATED OBJECT: Card (top card)
                   //Draw new top card on gui, store card data
                   //Process object
                   Card pileTopCard = (Card)msg.getContent();
-                  dPan.refresh(pileTopCard);
+                  //Process object
+                  Boolean isClockwise = (Boolean)msg.getMoreContent();
+                  dPan.refresh(pileTopCard,isClockwise);
                   break;
                case "SMS"://SERVER MESSAGE - ASSOCIATED OBJECT: String
                   //Display a server message on the gui.
@@ -348,8 +376,16 @@ public class ClientControl extends JFrame {
                   //Process Object
                   String oo = (String)msg.getContent();
                   //Execute
+                  System.out.println("ok msg: "+oo);
                   hMan.setAlert(oo);
-                  t.schedule(new AlertClearer(),1000);
+                  if(oo.equals("Card Played")) {
+                     System.out.println("Card played. Remove");
+                     hMan.setPlay(false);
+                     p.setTurn(false);
+                     hMan.removeLastCardPlayed();
+                     sendOut(new Message("UPDATE"));
+                  }
+                  t.schedule(new AlertClearer(),5000);
             }
          }
       }
@@ -378,6 +414,7 @@ public class ClientControl extends JFrame {
       private JPanel jpHandPanel;
       private JLabel jlAlert;
       private boolean hmanBusy = false;
+      private Card lastCard;
       final DefaultListModel<Card> cardNames = new DefaultListModel<Card>();
       HandManager() {
          setLayout(new BorderLayout());
@@ -389,7 +426,7 @@ public class ClientControl extends JFrame {
          jlistHand.setVisibleRowCount(1);
          add(new JScrollPane(jlistHand,JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS),"Center");
 
-         jlAlert = new JLabel("Test");
+         jlAlert = new JLabel("Hand Manager");
          jlAlert.setHorizontalTextPosition(JLabel.CENTER);
          add(jlAlert,"North");
          
@@ -401,8 +438,23 @@ public class ClientControl extends JFrame {
       public void setAlert(String alert) {
          jlAlert.setText(alert);
       }
+      public void clearAlert() {
+         jlAlert.setText("You have "+hand.size()+" cards in your hand");
+      }
       public void setPlay(boolean isEnabled) {
          jbPlayCard.setEnabled(isEnabled);
+      }
+      public void setLastCardPlayed(Card card) {
+         lastCard = card;
+         System.out.println("Last card set to: "+card.toString());
+      }
+      public void removeLastCardPlayed() {
+         for(int i = 0; i < hand.size(); i++) {
+            if(hand.get(i).compareTo(lastCard) == 0) {
+               hand.remove(i);
+            }
+         }
+         refresh();
       }
       public void setHand(ArrayList<Card> hand) {
          Collections.sort(hand);
@@ -414,6 +466,8 @@ public class ClientControl extends JFrame {
             RefreshHMAN t = new RefreshHMAN(jlistHand, hand);
             t.start();
             hmanBusy = true;
+         } else {
+            System.out.println("tried, but hman was busy!!");
          }
       }
       private class RefreshHMAN extends Thread {
@@ -426,14 +480,15 @@ public class ClientControl extends JFrame {
          public void run() {
             try {
                cardNames.clear();
-               try{sleep(100);}catch(InterruptedException ie){}
+               try{sleep(120);}catch(InterruptedException ie){}
                for(int i = 0; i < REFHAND.size(); i++) {
                   cardNames.add(i,REFHAND.get(i));
-                  try{sleep(10);}catch(InterruptedException ie){}
+                  try{sleep(20);}catch(InterruptedException ie){}
                }
-               try{sleep(100);}catch(InterruptedException ie){}
+               try{sleep(120);}catch(InterruptedException ie){}
                jlistHand.setModel(cardNames);
             } catch(NullPointerException idgaf) {
+               System.out.println(idgaf);
             } finally {
                synchronized("") {
                   hmanBusy = false;

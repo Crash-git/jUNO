@@ -25,6 +25,8 @@ public class PlayerListPanel extends JPanel {
          RefreshPLP t = new RefreshPLP(playerList);
          t.start();
          plpBusy = true;
+      } else {
+         System.out.println("tried to update plp, but it was  busy!!!");
       }
    }
    private class RefreshPLP extends Thread {
@@ -33,16 +35,21 @@ public class PlayerListPanel extends JPanel {
          this.playerList = playerList;
       }
       public void run() {
-         playerNames.clear();
-         try{sleep(100);}catch(InterruptedException ie){}
-         for(int i = 0; i < players.size(); i++) {
-            playerNames.add(i,players.get(i));
-            try{sleep(10);}catch(InterruptedException ie){}
-         }
-         try{sleep(100);}catch(InterruptedException ie){}
-         playerList.setModel(playerNames);
-         synchronized("") {
-            plpBusy = false;
+         try {
+            playerNames.clear();
+            try{sleep(100);}catch(InterruptedException ie){}
+            for(int i = 0; i < players.size(); i++) {
+               playerNames.add(i,players.get(i));
+               try{sleep(10);}catch(InterruptedException ie){}
+            }
+            try{sleep(100);}catch(InterruptedException ie){}
+            playerList.setModel(playerNames);
+         } catch(NullPointerException npe) {
+            System.out.println(npe);
+         } finally {
+            synchronized("") {
+               plpBusy = false;
+            }
          }
       }
    }
