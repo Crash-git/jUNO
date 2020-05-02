@@ -21,11 +21,14 @@ public class ServerControl extends JFrame {
    private ArrayList<ServerClient> userList = new ArrayList<ServerClient>();
    private ServerSocket ss = null;
    private JLabel jlDiscard, jlDraw;
+   private JFrame frame;
+   
    public static void main(String[] args) {
       new ServerControl();
    }
    public ServerControl() {
       super("jUNO Server");
+      frame = this;
       setLayout(new FlowLayout());
       try {
          ss = new ServerSocket(12345);
@@ -69,15 +72,12 @@ public class ServerControl extends JFrame {
                ServerClient selectedTurn = userList.get(rand.nextInt(userList.size()));
                Player selectedPlayer = selectedTurn.getPlayer();
                selectedPlayer.setTurn(true);
-               selectedTurn.sendOut(new Message("TURN"));
-               //Tell all players the states of all other players
-               ArrayList<Player> pList = new ArrayList<Player>();
-               for(ServerClient z : userList) {
-                  pList.add(z.getPlayer());
-               }
+              
                userList.get(0).broadcast(new Message("OK","New game started!"));
-               userList.get(0).broadcast(new Message("UPDATEALL",pList));
-               }            
+               userList.get(0).broadcast(new Message("CHAT","GAMELOG","New game started!"));
+               selectedTurn.broadcast(new Message("UPDATEALL",getAllPlayers()),true);
+               selectedTurn.sendOut(new Message("TURN"));
+            }            
          }
       });
       add(jbStart);      
@@ -98,6 +98,14 @@ public class ServerControl extends JFrame {
       pack();
       setVisible(true);
       setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+      frame.addWindowListener(new WindowAdapter() {
+         public void windowClosing(WindowEvent we) {
+            if(userList.size() > 0) {
+               userList.get(0).broadcast(new Message("ABORT"));
+            }
+            System.exit(0);
+         }
+      });
       
       final ConnectionManager CMAN = new ConnectionManager(ss);
       CMAN.start();
@@ -240,7 +248,8 @@ public class ServerControl extends JFrame {
       }
       
       public void run() {
-         while (true) {
+         boolean connection = true;
+         while (connection) {
             Message msg = null;
             try {
                msg = (Message) in.readObject();
@@ -281,6 +290,8 @@ public class ServerControl extends JFrame {
                      Card drawnCard = drawingDeck.draw();
                      p.add(drawnCard);
                      sendOut(new Message("HAND+",p.getHand(),"You drew a "+drawnCard.toString()),true);
+                     //broadcast(new Message("UPDATEALL",getAllPlayers(),true));
+                     broadcast(new Message("CHAT","GAMELOG",p.getName()+" drew a card"));
                      updatePlayerList();
                   } else {
                      sendOut(new Message("FAIL","NOT YOUR TURN"));
@@ -300,7 +311,8 @@ public class ServerControl extends JFrame {
                   ArrayList<Card> cards = discardDeck.getCards();
                   Card topCard = cards.get(0);
                   cards.remove(0);
-                  playCard(new Card(topCard.getValue(),color), pCardStorage);
+                  System.out.println("Hand size is: "+p.getHandSize());
+                  playCard(new Card(topCard.getValue(),color));
                   break;
                case "PLAY"://PLAY CARD - ASSOCIATED OBJECT: Card
                   //Process object
@@ -324,7 +336,7 @@ public class ServerControl extends JFrame {
                         if(!p.getTurn()) {
                            sendOut(new Message("FAIL","NOT YOUR TURN"));
                         } else {
-                           playCard(card, cardIndex);
+                           playCard(card);
                         }
                      }
                   }
@@ -348,9 +360,10 @@ public class ServerControl extends JFrame {
                   break;
                case "UNO"://DECLARE UNO - ASSOCIATED OBJECT: ArrayList<Card>
                   //Process object
-                  if(p.getHandSize() == 1) {
+                  if(p.getHandSize() <= 2) {
                      p.setUno(true);
                      sendOut(new Message("OK","You have declared you have UNO!"));
+                     broadcast(new Message("CHAT","GAMELOG",p.getName()+" declared UNO!"));
                   } else {
                      sendOut(new Message("FAIL","NOT ONE CARD LEFT"));
                   }
@@ -361,7 +374,7 @@ public class ServerControl extends JFrame {
                   boolean correctCallOut = false;
                   for(ServerClient z: userList) {
                      Player q = z.getPlayer();
-                     if(q.getHandSize() == 1) {
+                     if(q.getHandSize() == 1 && !q.getName().equals(p.getName())) {
                         if(!q.getUno()) {
                            //PENALTY FOR NOT CALLING UNO
                            correctCallOut = true;
@@ -370,6 +383,7 @@ public class ServerControl extends JFrame {
                            q.add(cp1);
                            q.add(cp2);
                            z.sendOut(new Message("HAND+",q.getHand(),p.getName()+" called you out for not saying UNO! Penalty: "+cp1.toString()+", "+cp2.toString()),true);
+                           broadcast(new Message("CHAT","GAMELOG",p.getName()+" called "+q.getName()+" for not saying UNO! 2 card penalty"));
                         }
                      }
                   }
@@ -380,6 +394,7 @@ public class ServerControl extends JFrame {
                      Card c2 = drawingDeck.draw();
                      p.add(c2);
                      sendOut(new Message("HAND+",p.getHand(),"Nobody is at fault. Penalty of 2 cards: "+c1.toString()+", "+c2.toString()),true);
+                     broadcast(new Message("CHAT","GAMELOG",p.getName()+" called out someone for not saying UNO, but nobody was at fault! 2 card penalty"));
                   }
                   break;
                case "UPDATE"://REQUEST UPDATE - ASSOCIATED OBJECT: null
@@ -394,10 +409,15 @@ public class ServerControl extends JFrame {
                case "ABORT"://ABORT aka DISCONNECT - ASSOCIATED OBJECT: null
                   //No object to process
                   //Execute
+                  connection = false;
                   userList.remove(userList.indexOf(this));
                   broadcast(new Message("UPDATEALL",getAllPlayers()),true);
+                  broadcast(new Message("CHAT","GAMELOG",p.getName()+" has disconnected"));
+                  if(userList.size() == 1) {
+                     userList.get(0).sendOut(new Message("WIN"));
+                  }
                   //Send OK
-                  sendOut(new Message("OK","Client has been aborted"));
+                  sendOut(new Message("GOODBYE"));
                   break;
             }
          }
@@ -480,8 +500,27 @@ public class ServerControl extends JFrame {
          return socket;
       }
       
-      public void playCard(Card card, int cardIndex) {
-         p.play(cardIndex);
+      public void playCard(Card card) {
+         if(card.getValue() == -5 ||  card.getValue() == -4) {
+            Card indSearch = new Card(card.getValue(),'X');
+            ArrayList<Card> hand = p.getHand();
+            boolean found = false;
+            for(int i = 0; i < hand.size(); i++) {
+               if(hand.get(i).compareTo(indSearch) == 0 && !found) {
+                  p.play(i);
+                  found = true;
+               }
+            }
+         } else {
+            ArrayList<Card> hand = p.getHand();
+            boolean found = false;
+            for(int i = 0; i < hand.size(); i++) {
+               if(hand.get(i).compareTo(card) == 0 && !found) {
+                  p.play(i);
+                  found = true;
+               }
+            }
+         }
          pCardStorage = -1;
          discardDeck.insert(card);
          broadcast(new Message("PILE",card,isClockwise));
@@ -494,8 +533,6 @@ public class ServerControl extends JFrame {
             broadcast(new Message("LOSE",p.getName()),true);
          } else {
             if(card.getColor() == 'X') {
-               System.out.println("pcardstorage set to "+cardIndex);
-               pCardStorage = cardIndex;
                sendOut(new Message("COLORP"));
             } else {
                sendOut(new Message("OK","Card Played"));

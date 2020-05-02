@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DeckPanel extends JPanel {
    Deck drawingDeck;
@@ -8,6 +10,7 @@ public class DeckPanel extends JPanel {
    JPanel jpDiscard, jpDrawing;
    JLabel jlDiscard, jlDrawing, jlTurnOrder;
    JButton jbDraw;
+   java.util.Timer t = new java.util.Timer();
    DeckPanel() {
       setLayout(new BorderLayout());
       JPanel mainPanel = new JPanel();
@@ -47,6 +50,13 @@ public class DeckPanel extends JPanel {
       jlTurnOrder.setHorizontalTextPosition(JLabel.RIGHT);
       jlTurnOrder.setVerticalTextPosition(JLabel.CENTER);
       
+      jbDraw.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent ae) {
+            jbDraw.setEnabled(false);
+            t.schedule(new ReactivateButton(),2000);
+         }
+      });
+      
       add(jlTurnOrder,"North");
       add(mainPanel,"Center");
    }
@@ -72,5 +82,11 @@ public class DeckPanel extends JPanel {
    
    public JButton getButton() {
       return jbDraw;
+   }
+   
+   public class ReactivateButton extends TimerTask {
+      public void run() {
+         jbDraw.setEnabled(true);
+      }
    }
 }

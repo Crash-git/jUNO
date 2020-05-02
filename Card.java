@@ -75,6 +75,8 @@ public class Card implements Cloneable, Comparable, Serializable {
             case -4:
                retStr+="Draw 4";
                break;
+            case -5:
+               retStr+="(Wild)";
             default:
                break;
          }

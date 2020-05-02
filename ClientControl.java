@@ -11,7 +11,7 @@ public class ClientControl extends JFrame {
    private JFrame frame;
    private HandManager hMan;
    private JList jlistHand;
-   private JButton jbPlayCard, jbTest2;
+   private JButton jbPlayCard, jbUno, jbCallout;
    private PlayerPanel playerPanelA, playerPanelB, playerPanelC;
    private PlayerListPanel plp;
    private DeckPanel dPan;
@@ -44,11 +44,18 @@ public class ClientControl extends JFrame {
       JPanel jpRow1 = new JPanel(new GridLayout(0,3));
       JPanel jpRow2 = new JPanel(new GridLayout(0,3));
       JPanel jpHand = new JPanel(new GridLayout(0,1));
-      jpRow1.add(new JButton("Uno"));
+      JPanel jpUno = new JPanel();
+      jbUno = new JButton("Uno");
+      jbUno.setHorizontalAlignment(JLabel.CENTER);
+      jpUno.add(jbUno);
+      jpRow1.add(jpUno);
       playerPanelB = new PlayerPanel(new Player("PLAYER B"));
       jpRow1.add(playerPanelB);
-      jbTest2 = new JButton("Callout");
-      jpRow1.add(jbTest2);
+      JPanel jpCallout = new JPanel();
+      jbCallout = new JButton("Callout");
+      jbCallout.setHorizontalAlignment(JLabel.CENTER);
+      jpCallout.add(jbCallout);
+      jpRow1.add(jpCallout);
       playerPanelA = new PlayerPanel(new Player("PLAYER A"));
       jpRow2.add(playerPanelA);
       dPan = new DeckPanel();
@@ -65,10 +72,10 @@ public class ClientControl extends JFrame {
       add(mainLayout);
       add(sidebar);
       pack();
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       setVisible(true);
       try {
-         Socket s = new Socket("localhost",12345);
+         Socket s = new Socket("172.101.242.195",12345);
          cc = new ClientCommunicator(s);
          cc.start();
          System.out.println("Conntected");
@@ -102,7 +109,6 @@ public class ClientControl extends JFrame {
       plp.setList(players);
       switch(players.size()) {
          case 1:
-            System.out.println("I should go!");
             playerPanelA.setPlayer();
             playerPanelB.setPlayer();
             playerPanelC.setPlayer();
@@ -139,6 +145,7 @@ public class ClientControl extends JFrame {
       private ObjectOutputStream out = null;
       private Player p = null;
       private java.util.Timer t;      
+      private boolean aborting = false;
       /**
         * ServerClient - Create a new client with a blank player
         * @param socket - Socket for this client
@@ -186,12 +193,22 @@ public class ClientControl extends JFrame {
                }
             }
          });
-         jbTest2.addActionListener(new ActionListener() {
+         //Activate uno/callout buttons
+         jbUno.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-               sendOut(new Message("HAND"));
+               sendOut(new Message("UNO"));
             }
          });
-
+         jbCallout.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+               sendOut(new Message("CALLOUT"));
+            }
+         });
+         frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+               sendOut(new Message("ABORT"));
+            }
+         });
       }
             
       public void run() {
@@ -328,11 +345,7 @@ public class ClientControl extends JFrame {
                      //set the first element to be the last element
                      updateAllPlayerList.set(0, temp);  
                   }
-                  try {
-                     updatePlayerCards(updateAllPlayerList);
-                  } catch (Exception e) {
-                     System.out.println(e);
-                  }//Dont know why it happens
+                  updatePlayerCards(updateAllPlayerList);
                   break;
                case "PILE"://UPDATE DISCARD PILE - ASSOCIATED OBJECT: Card (top card)
                   //Draw new top card on gui, store card data
@@ -366,6 +379,9 @@ public class ClientControl extends JFrame {
                   JOptionPane.showMessageDialog(null,"Server is shutting down");
                   System.exit(0);
                   break;
+               case "GOODBYE":
+                  System.exit(0);
+                  break;
                case "FAIL"://OK - this might honestly be it's own thing, but im putting it here so we know to add it later
                   //Process Object
                   String ff = (String)msg.getContent();
@@ -378,12 +394,19 @@ public class ClientControl extends JFrame {
                   //Execute
                   System.out.println("ok msg: "+oo);
                   hMan.setAlert(oo);
+                  if(oo.equals("New game started!")) {
+                     p.setTurn(false);
+                     hMan.setPlay(false);
+                  }
                   if(oo.equals("Card Played")) {
                      System.out.println("Card played. Remove");
                      hMan.setPlay(false);
                      p.setTurn(false);
                      hMan.removeLastCardPlayed();
                      sendOut(new Message("UPDATE"));
+                  }
+                  if(oo.equals("Uno called")) {
+                     p.setUno(true);
                   }
                   t.schedule(new AlertClearer(),5000);
             }
@@ -442,6 +465,7 @@ public class ClientControl extends JFrame {
          jlAlert.setText("You have "+hand.size()+" cards in your hand");
       }
       public void setPlay(boolean isEnabled) {
+         System.out.println("Play set to "+isEnabled);
          jbPlayCard.setEnabled(isEnabled);
       }
       public void setLastCardPlayed(Card card) {

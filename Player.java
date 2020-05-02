@@ -122,6 +122,9 @@ public class Player implements Serializable {
      */
    public void setHand(ArrayList<Card> hand) {
       this.hand = hand;
+      if(isUno && hand.size() > 1) {
+         isUno = false;
+      }
    }
    public void setHand() {
       this.hand = new ArrayList<Card>();
@@ -149,7 +152,9 @@ public class Player implements Serializable {
      */
    public void add(Card card) {
       hand.add(card);
-      System.out.println("PLAYER ADDED CARD "+card);
+      if(isUno && hand.size() > 1) {
+         isUno = false;
+      }
    }
    
 }
