@@ -51,6 +51,7 @@ public class DeckPanel extends JPanel {
       mainPanel.add(jpDrawing);
       
       jlTurnOrder = new JLabel("Turn order: Clockwise");
+      jlTurnOrder.setIcon(new ImageIcon(getClass().getResource("resources/counterclockwise.png")));
       jlTurnOrder.setIcon(new ImageIcon(getClass().getResource("resources/clockwise.png")));
       jlTurnOrder.setHorizontalAlignment(JLabel.CENTER);
       jlTurnOrder.setHorizontalTextPosition(JLabel.RIGHT);
