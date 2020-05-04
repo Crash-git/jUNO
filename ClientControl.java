@@ -619,7 +619,7 @@ public class ClientControl extends JFrame {
               Card card = (Card)value;
               String uValue = card.toString();
               JLabel label = (JLabel) super.getListCellRendererComponent(list, "", index, isSelected, cellHasFocus);
-              label.setIcon(new ImageIcon(getClass().getResource("resources/"+card.toFileString()+".png")));//"resources/"+card.toFileString()+".gif"
+              label.setIcon(Card.getCardGraphic(card));//"resources/"+card.toFileString()+".gif"
               label.setHorizontalTextPosition(JLabel.CENTER);
               label.setVerticalTextPosition(JLabel.BOTTOM);
               label.setToolTipText(uValue);

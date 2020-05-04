@@ -1,4 +1,5 @@
 import java.util.*;
+import javax.swing.ImageIcon;
 import java.io.Serializable;
 /**
   * Card - Core structure class for a card. Contains its properties
@@ -140,6 +141,152 @@ public class Card implements Cloneable, Comparable, Serializable {
             return 0;
          }
       }
+   }
+   
+   public static ImageIcon getCardGraphic(Card c) {
+      ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+      switch(c.getColor()) {
+         case 'X':
+            switch(c.getValue()) {
+               case -5:
+                  return new ImageIcon(classLoader.getResource("resources/x.png"));
+               case -4:
+                  return new ImageIcon(classLoader.getResource("resources/x_d4.png"));
+            }
+         case 'R':
+            switch(c.getValue()) {
+               case 0:
+                  return new ImageIcon(classLoader.getResource("resources/r_0.png"));
+               case 1:
+                  return new ImageIcon(classLoader.getResource("resources/r_1.png"));
+               case 2:
+                  return new ImageIcon(classLoader.getResource("resources/r_2.png"));
+               case 3:
+                  return new ImageIcon(classLoader.getResource("resources/r_3.png"));
+               case 4:
+                  return new ImageIcon(classLoader.getResource("resources/r_4.png"));
+               case 5:
+                  return new ImageIcon(classLoader.getResource("resources/r_5.png"));
+               case 6:
+                  return new ImageIcon(classLoader.getResource("resources/r_6.png"));
+               case 7:
+                  return new ImageIcon(classLoader.getResource("resources/r_7.png"));
+               case 8:
+                  return new ImageIcon(classLoader.getResource("resources/r_8.png"));
+               case 9:
+                  return new ImageIcon(classLoader.getResource("resources/r_9.png"));
+               case -1:
+                  return new ImageIcon(classLoader.getResource("resources/r_r.png"));
+               case -2:
+                  return new ImageIcon(classLoader.getResource("resources/r_d2.png"));
+               case -3:
+                  return new ImageIcon(classLoader.getResource("resources/r_s.png"));
+               case -4:
+                  return new ImageIcon(classLoader.getResource("resources/r_d4.png"));
+               case -5:
+                  return new ImageIcon(classLoader.getResource("resources/r.png"));
+            }
+         case 'B':
+            switch(c.getValue()) {
+               case 0:
+                  return new ImageIcon(classLoader.getResource("resources/b_0.png"));
+               case 1:
+                  return new ImageIcon(classLoader.getResource("resources/b_1.png"));
+               case 2:
+                  return new ImageIcon(classLoader.getResource("resources/b_2.png"));
+               case 3:
+                  return new ImageIcon(classLoader.getResource("resources/b_3.png"));
+               case 4:
+                  return new ImageIcon(classLoader.getResource("resources/b_4.png"));
+               case 5:
+                  return new ImageIcon(classLoader.getResource("resources/b_5.png"));
+               case 6:
+                  return new ImageIcon(classLoader.getResource("resources/b_6.png"));
+               case 7:
+                  return new ImageIcon(classLoader.getResource("resources/b_7.png"));
+               case 8:
+                  return new ImageIcon(classLoader.getResource("resources/b_8.png"));
+               case 9:
+                  return new ImageIcon(classLoader.getResource("resources/b_9.png"));
+               case -1:
+                  return new ImageIcon(classLoader.getResource("resources/b_r.png"));
+               case -2:
+                  return new ImageIcon(classLoader.getResource("resources/b_d2.png"));
+               case -3:
+                  return new ImageIcon(classLoader.getResource("resources/b_s.png"));
+               case -4:
+                  return new ImageIcon(classLoader.getResource("resources/b_d4.png"));
+               case -5:
+                  return new ImageIcon(classLoader.getResource("resources/b.png"));
+            }
+         case 'Y':
+            switch(c.getValue()) {
+               case 0:
+                  return new ImageIcon(classLoader.getResource("resources/y_0.png"));
+               case 1:
+                  return new ImageIcon(classLoader.getResource("resources/y_1.png"));
+               case 2:
+                  return new ImageIcon(classLoader.getResource("resources/y_2.png"));
+               case 3:
+                  return new ImageIcon(classLoader.getResource("resources/y_3.png"));
+               case 4:
+                  return new ImageIcon(classLoader.getResource("resources/y_4.png"));
+               case 5:
+                  return new ImageIcon(classLoader.getResource("resources/y_5.png"));
+               case 6:
+                  return new ImageIcon(classLoader.getResource("resources/y_6.png"));
+               case 7:
+                  return new ImageIcon(classLoader.getResource("resources/y_7.png"));
+               case 8:
+                  return new ImageIcon(classLoader.getResource("resources/y_8.png"));
+               case 9:
+                  return new ImageIcon(classLoader.getResource("resources/y_9.png"));
+               case -1:
+                  return new ImageIcon(classLoader.getResource("resources/y_r.png"));
+               case -2:
+                  return new ImageIcon(classLoader.getResource("resources/y_d2.png"));
+               case -3:
+                  return new ImageIcon(classLoader.getResource("resources/y_s.png"));
+               case -4:
+                  return new ImageIcon(classLoader.getResource("resources/y_d4.png"));
+               case -5:
+                  return new ImageIcon(classLoader.getResource("resources/y.png"));
+            }
+         case 'G':
+            switch(c.getValue()) {
+               case 0:
+                  return new ImageIcon(classLoader.getResource("resources/g_0.png"));
+               case 1:
+                  return new ImageIcon(classLoader.getResource("resources/g_1.png"));
+               case 2:
+                  return new ImageIcon(classLoader.getResource("resources/g_2.png"));
+               case 3:
+                  return new ImageIcon(classLoader.getResource("resources/g_3.png"));
+               case 4:
+                  return new ImageIcon(classLoader.getResource("resources/g_4.png"));
+               case 5:
+                  return new ImageIcon(classLoader.getResource("resources/g_5.png"));
+               case 6:
+                  return new ImageIcon(classLoader.getResource("resources/g_6.png"));
+               case 7:
+                  return new ImageIcon(classLoader.getResource("resources/g_7.png"));
+               case 8:
+                  return new ImageIcon(classLoader.getResource("resources/g_8.png"));
+               case 9:
+                  return new ImageIcon(classLoader.getResource("resources/g_9.png"));
+               case -1:
+                  return new ImageIcon(classLoader.getResource("resources/g_r.png"));
+               case -2:
+                  return new ImageIcon(classLoader.getResource("resources/g_d2.png"));
+               case -3:
+                  return new ImageIcon(classLoader.getResource("resources/g_s.png"));
+               case -4:
+                  return new ImageIcon(classLoader.getResource("resources/g_d4.png"));
+               case -5:
+                  return new ImageIcon(classLoader.getResource("resources/g.png"));
+            }
+      }
+      return new ImageIcon(classLoader.getResource("resources/back.gif"));
    }
    /**
      * clone
