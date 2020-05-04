@@ -22,7 +22,7 @@ public class PlayerPanel extends JPanel {
       this.p = p;
       setLayout(new FlowLayout());
       jlName = new JLabel(p.getName());
-      jlName.setIcon(new ImageIcon("resources/hand0.png"));
+      jlName.setIcon(new ImageIcon(getClass().getResource("resources/hand0.png")));
       jlName.setHorizontalAlignment(JLabel.CENTER);
       jlName.setHorizontalTextPosition(JLabel.CENTER);
       jlName.setVerticalTextPosition(JLabel.TOP);
@@ -34,9 +34,9 @@ public class PlayerPanel extends JPanel {
    public void refresh() {
       jlName.setText(p.getName()+" | Hand: "+p.getHandSize());
       if(p.getHandSize() < 10) {
-         jlName.setIcon(new ImageIcon("resources/hand"+p.getHandSize()+".png"));
+         jlName.setIcon(new ImageIcon(getClass().getResource("resources/hand"+p.getHandSize()+".png")));
       } else {
-         jlName.setIcon(new ImageIcon("resources/handplus.png"));
+         jlName.setIcon(new ImageIcon(getClass().getResource("resources/handplus.png")));
       }
    }
    /**
@@ -46,9 +46,9 @@ public class PlayerPanel extends JPanel {
    public void setPlayer(Player p) {
       jlName.setText(p.getName()+" | Hand: "+p.getHandSize());
       if(p.getHandSize() < 10) {
-         jlName.setIcon(new ImageIcon("resources/hand"+p.getHandSize()+".png"));
+         jlName.setIcon(new ImageIcon(getClass().getResource("resources/hand"+p.getHandSize()+".png")));
       } else {
-         jlName.setIcon(new ImageIcon("resources/handplus.png"));
+         jlName.setIcon(new ImageIcon(getClass().getResource("resources/handplus.png")));
       }
    }
    /**

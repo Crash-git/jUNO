@@ -27,7 +27,7 @@ public class DeckPanel extends JPanel {
       
       
       jlDiscard = new JLabel("DRAW");
-      jlDiscard.setIcon(new ImageIcon("resources/r_1.gif"));
+      jlDiscard.setIcon(new ImageIcon(getClass().getResource("resources/r_1.gif")));
       jlDiscard.setHorizontalTextPosition(JLabel.CENTER);
       jlDiscard.setVerticalTextPosition(JLabel.BOTTOM);
       
@@ -40,7 +40,7 @@ public class DeckPanel extends JPanel {
       jbDraw.setToolTipText("Draw a card");
       
       jlDrawing = new JLabel("");
-      jlDrawing.setIcon(new ImageIcon("resources/back.gif"));
+      jlDrawing.setIcon(new ImageIcon(getClass().getResource("resources/back.gif")));
       jlDrawing.setHorizontalTextPosition(JLabel.CENTER);
       jlDrawing.setVerticalTextPosition(JLabel.BOTTOM);
       
@@ -51,7 +51,7 @@ public class DeckPanel extends JPanel {
       mainPanel.add(jpDrawing);
       
       jlTurnOrder = new JLabel("Turn order: Clockwise");
-      jlTurnOrder.setIcon(new ImageIcon("resources/clockwise.png"));
+      jlTurnOrder.setIcon(new ImageIcon(getClass().getResource("resources/clockwise.png")));
       jlTurnOrder.setHorizontalAlignment(JLabel.CENTER);
       jlTurnOrder.setHorizontalTextPosition(JLabel.RIGHT);
       jlTurnOrder.setVerticalTextPosition(JLabel.CENTER);
@@ -74,15 +74,15 @@ public class DeckPanel extends JPanel {
      */
    public void refresh(Card discardTopCard, boolean isClockwise) {
       this.discardTopCard = discardTopCard;
-      jlDiscard.setIcon(new ImageIcon("resources/"+discardTopCard.toFileString()+".png"));
+      jlDiscard.setIcon(new ImageIcon(getClass().getResource("resources/"+discardTopCard.toFileString()+".png")));
       jlDiscard.setToolTipText(discardTopCard.toString());
       jlDiscard.setText(discardTopCard.toString());
       if(isClockwise) {
          jlTurnOrder.setText("Turn order: Clockwise");
-         jlTurnOrder.setIcon(new ImageIcon("resources/clockwise.png"));
+         jlTurnOrder.setIcon(new ImageIcon(getClass().getResource("resources/clockwise.png")));
       } else {
          jlTurnOrder.setText("Turn order: Counter-Clockwise");
-         jlTurnOrder.setIcon(new ImageIcon("resources/counterclockwise.png"));
+         jlTurnOrder.setIcon(new ImageIcon(getClass().getResource("resources/counterclockwise.png")));
       }
    }
    
