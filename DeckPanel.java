@@ -75,7 +75,7 @@ public class DeckPanel extends JPanel {
      */
    public void refresh(Card discardTopCard, boolean isClockwise) {
       this.discardTopCard = discardTopCard;
-      jlDiscard.setIcon(new ImageIcon(getClass().getResource("resources/"+discardTopCard.toFileString()+".png")));
+      jlDiscard.setIcon(Card.getCardGraphic(discardTopCard));
       jlDiscard.setToolTipText(discardTopCard.toString());
       jlDiscard.setText(discardTopCard.toString());
       if(isClockwise) {
