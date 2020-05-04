@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+  * DeckPanel - Display discard deck's top card graphic, as well as drawing
+  */
 public class DeckPanel extends JPanel {
    Deck drawingDeck;
    Card discardTopCard;
@@ -11,6 +14,9 @@ public class DeckPanel extends JPanel {
    JLabel jlDiscard, jlDrawing, jlTurnOrder;
    JButton jbDraw;
    java.util.Timer t = new java.util.Timer();
+   /**
+     * Constructs a deckpanel
+     */
    DeckPanel() {
       setLayout(new BorderLayout());
       JPanel mainPanel = new JPanel();
@@ -61,11 +67,11 @@ public class DeckPanel extends JPanel {
       add(mainPanel,"Center");
    }
    
-   DeckPanel(Deck drawingDeck, Card discardTopCard) {
-      this.drawingDeck = drawingDeck;
-      this.discardTopCard = discardTopCard;
-   }
-   
+   /**
+     * refresh - Update deckpanel with new data
+     * @param discardTopCard - Top card to display
+     * @param isClockwise - Turn direction
+     */
    public void refresh(Card discardTopCard, boolean isClockwise) {
       this.discardTopCard = discardTopCard;
       jlDiscard.setIcon(new ImageIcon("resources/"+discardTopCard.toFileString()+".png"));
@@ -80,10 +86,17 @@ public class DeckPanel extends JPanel {
       }
    }
    
+   /** 
+     * getButton - Get the button object, for adding event listeners
+     * @return JButton for adding event listeners
+     */
    public JButton getButton() {
       return jbDraw;
    }
    
+   /**
+     * ReactivateButton - TimerTask that resets the button to be clicked again
+     */
    public class ReactivateButton extends TimerTask {
       public void run() {
          jbDraw.setEnabled(true);

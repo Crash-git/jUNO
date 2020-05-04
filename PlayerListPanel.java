@@ -1,13 +1,20 @@
 import java.awt.*;
 import javax.swing.*;
 import java.util.ArrayList;
-
+/**
+  * PlayerListPanel displays a list of players showing their name, if it's their turn, if they've called uno, and their card count
+  * @author ngiano
+  * iste121
+  */
 public class PlayerListPanel extends JPanel {
    private JList playerList;
    final DefaultListModel<Player> playerNames = new DefaultListModel<Player>();
    ArrayList<Player> players;
    private boolean plpBusy = false;
-   PlayerListPanel() {
+   /**
+     * PlayerListPanel() Constructor
+     */
+   public PlayerListPanel() {
       setLayout(new BorderLayout());
       playerList = new JList();
       playerList.setCellRenderer(new PlayerListRenderer());
@@ -16,10 +23,17 @@ public class PlayerListPanel extends JPanel {
       add(playerList,"Center");
       setVisible(true);
    }
+   /**
+     * setList - Set the list of players
+     * @param players - List of players
+     */
    public void setList(ArrayList<Player> players) {
       this.players = players;
       refresh();
    }
+   /**
+     * refresh - Refresh the ui
+     */
    public void refresh() {
       if(!plpBusy) {
          RefreshPLP t = new RefreshPLP(playerList);
@@ -29,6 +43,9 @@ public class PlayerListPanel extends JPanel {
          System.out.println("tried to update plp, but it was  busy!!!");
       }
    }
+   /**
+     * RefreshPLP - Refresh PlayerListPanel threaded because JList/Vectors are synchronous sensitive
+     */
    private class RefreshPLP extends Thread {
       JList playerList;
       public RefreshPLP(JList playerList) {
@@ -53,6 +70,9 @@ public class PlayerListPanel extends JPanel {
          }
       }
    }
+   /**
+     * PlayerListRenderer - Custom renderer to use Player objects instead of labels/strings
+     */
    public class PlayerListRenderer extends DefaultListCellRenderer {
       
       Font normal = new Font("Calibri",Font.PLAIN,24);

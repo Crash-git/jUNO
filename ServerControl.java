@@ -1,17 +1,14 @@
-/**
- * Multithreaded Uno Server
- * @author Collin Lavergne / ngiano
- * @version 
- * ISTE 121
- */
-
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.net.*;
 import java.io.*;
 import java.util.*;
-
+/**
+  * ServerControl - Main control unit for server, builds GUI, handles messages from clients
+  * @author Collin Lavergne / ngiano
+  * iste121
+  */
 public class ServerControl extends JFrame {
    //Game variables
    private Deck drawingDeck = new Deck();
@@ -31,6 +28,9 @@ public class ServerControl extends JFrame {
    public static void main(String[] args) {
       new ServerControl();
    }
+   /**
+     * ServerControl - builds server gui and starts message/connection handlers
+     */
    public ServerControl() {
       super("jUNO Server");
       frame = this;
@@ -153,6 +153,10 @@ public class ServerControl extends JFrame {
      */
    class ConnectionManager extends Thread {
       private ServerSocket ss;
+      /**
+        * ConnectionManager
+        * @param ss - ServerSocket the server socket for bringing in new sockets
+        */
       ConnectionManager(ServerSocket ss) {
          this.ss = ss;
       }
@@ -184,6 +188,7 @@ public class ServerControl extends JFrame {
    /**
      * helper method
      * getAllPlayers - get all the player objects from each connected component
+     * @return array list of all connected players
      */
    public ArrayList<Player> getAllPlayers() {
       ArrayList<Player> pList = new ArrayList<Player>();
@@ -196,6 +201,8 @@ public class ServerControl extends JFrame {
    /**
      * helper method
      * getNextTurn - get the next player in the turn order
+     * @param current - Current turn
+     * @return next - Next turn
      */
    public ServerClient getNextTurn(ServerClient current) {
       int playerCount = userList.size();
@@ -481,7 +488,7 @@ public class ServerControl extends JFrame {
       /**
         * sendOut - Send out a message to the client on the other end
         * @param msg - Message object containing the message
-        * @returns boolean - Successfully sent message
+        * @return boolean - Successfully sent message
         */
       public boolean sendOut(Message msg) {
          try {
@@ -499,7 +506,7 @@ public class ServerControl extends JFrame {
         * sendOut - Send out a message to the client on the other end
         * @param msg - Message object containing the message
         * @param shouldReset - Reset the object stream after sending, because of caching
-        * @returns boolean - Successfully sent message
+        * @return boolean - Successfully sent message
         */
       public boolean sendOut(Message msg, boolean shouldReset) {
          try {
@@ -519,7 +526,7 @@ public class ServerControl extends JFrame {
       /**
         * broadcast - Send out to all clients
         * @param msg - Message object containing the message
-        * @returns boolean - Successfully sent message
+        * @return boolean - Successfully sent message
         */
       public boolean broadcast(Message msg) {
          for(ServerClient sc: userList) {
@@ -534,7 +541,8 @@ public class ServerControl extends JFrame {
       /**
         * broadcast,true - Send out to all clients EXCEPT self
         * @param msg - Message object containing the message
-        * @returns boolean - Successfully sent message
+        * @param excludeSelf - Exclude self switch
+        * @return boolean - Successfully sent message
         */
       public boolean broadcast(Message msg, boolean excludeSelf) {
          for(ServerClient sc: userList) {
@@ -551,12 +559,14 @@ public class ServerControl extends JFrame {
       
       /**
         * getPlayer - Get player
+        * @return p - The player
         */
       public Player getPlayer() {
          return p;
       }
       /**
         * getSocket - Get Socket
+        * @return socket The socket
         */
       public Socket getSocket() {
          return socket;

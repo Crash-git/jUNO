@@ -38,14 +38,24 @@ public class Message implements Serializable {
       this.moreContent = moreContent;
    }
    
+   /**
+     * getCommand - Get the command of the message
+     * @return command - Message command
+     */
    public String getCommand() {
       return command;
    }
-   
+   /**
+     * getContent - Get the content of the message
+     * @return content - Message content
+     */
    public Object getContent() {
       return content;
    }
-   
+   /**
+     * getMoreContent - Get the additional content of the message
+     * @return moreContent - More message content
+     */
    public Object getMoreContent() {
       return moreContent;
    }

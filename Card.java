@@ -1,11 +1,10 @@
+import java.util.*;
+import java.io.Serializable;
 /**
   * Card - Core structure class for a card. Contains its properties
   * @author - ngiano
   * @version 4.3.20
   */
-import java.util.*;
-import java.io.Serializable;
-
 public class Card implements Cloneable, Comparable, Serializable {
    int value;
    char color; // (R)ed (B)lue (G)reen (Y)ellow (X)Wild
@@ -20,24 +19,28 @@ public class Card implements Cloneable, Comparable, Serializable {
    }
    /**
      * setColor - Set the card's color (In case of wild)
+     * @param color - Card color
      */
    public void setColor(char color) {
       this.color = color;
    }
    /**
      * getColor - Get the card's color
+     * @return color - Card color
      */
    public char getColor() {
       return color;
    }
    /**
      * getValue - Get the card's value
+     * @return value - Card value
      */
    public int getValue() {
       return value;
    }
    /**
      * toString - Get the card's human-readable name
+     * @return str - Card readable name
      */
    public String toString() {
       String retStr = "";
@@ -86,6 +89,7 @@ public class Card implements Cloneable, Comparable, Serializable {
    }
    /**
      * toFileString - Get computer-friendly name of the card
+     * @return str - File-readable string
      */
    public String toFileString() {
       String retStr = ""+color;
@@ -112,6 +116,8 @@ public class Card implements Cloneable, Comparable, Serializable {
    }
    /**
      * compareTo - Used for sorting
+     * @param comparableO - Card to compare
+     * @return int - Compare (-1, 0, 1) for sorting
      */
    public int compareTo(Object comparableO) {
       Card comparable = (Card)comparableO;
@@ -135,6 +141,10 @@ public class Card implements Cloneable, Comparable, Serializable {
          }
       }
    }
+   /**
+     * clone
+     * @return clone
+     */
    public Object clone() throws CloneNotSupportedException {
       return super.clone();
    } 
