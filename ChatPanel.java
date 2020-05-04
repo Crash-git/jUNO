@@ -1,6 +1,5 @@
-
 /**
- * Chat client to be pasted into a JFrame
+ * Chat client to be pasted into a JPanel
  * @author Collin Lavergne
  * @version 1.3.0
  * ISTE 121
@@ -29,16 +28,6 @@ public class ChatPanel extends JPanel {
         send = new JButton("Send");
         chatCombined = new JPanel();
 
-        // send.addActionListener(new ActionListener() {
-        //     public void actionPerformed(ActionEvent ae) {
-        //     send.setEnabled(false);
-        //     sendMessage(username + ": " + chatInput.getText());
-
-        //     chatInput.setText("");
-        //     chatInput.requestFocus();
-        //     send.setEnabled(true);
-        //     }
-        // });
         JPanel sendBar = new JPanel();
         sendBar.setLayout(new BoxLayout(sendBar,BoxLayout.X_AXIS));
         chatInput = new JTextField(15);
@@ -57,10 +46,21 @@ public class ChatPanel extends JPanel {
         add(chatCombined, BorderLayout.CENTER);
         // sendMessage(username + " connected");
     }
-   
-    // public void sendMessage(String input) {
+    //Read-only chat panel
+   public ChatPanel() {
+        setLayout(new BorderLayout());
+
+        username = "None";
+
+        send = new JButton("Send");
         
-    // }
+        chat = new JTextArea();
+        chat.setEditable(false);
+
+        scroll = new JScrollPane(chat, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        add(scroll, BorderLayout.CENTER);
+    }
 
     public void updateChat(String readout) {
         chat.append("\n" + readout);

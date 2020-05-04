@@ -2,8 +2,8 @@ import java.awt.*;
 import javax.swing.*;
 
 public class PlayerPanel extends JPanel {
-   Player p;
-   JLabel jlName;
+   private Player p;
+   private JLabel jlName;
    PlayerPanel() {
    }
    PlayerPanel(Player p) {

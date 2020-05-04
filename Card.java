@@ -1,4 +1,3 @@
-
 /**
   * Card - Core structure class for a card. Contains its properties
   * @author - ngiano

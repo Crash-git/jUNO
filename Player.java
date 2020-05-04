@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.io.Serializable;
-
 /**
   * Player - manages a player, and their hand
   * @author - ngiano

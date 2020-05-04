@@ -11,6 +11,7 @@ public class ClientControl extends JFrame {
    private JFrame frame;
    private HandManager hMan;
    private JList jlistHand;
+   private JMenuItem jmiRefresh;
    private JButton jbPlayCard, jbUno, jbCallout;
    private PlayerPanel playerPanelA, playerPanelB, playerPanelC;
    private PlayerListPanel plp;
@@ -31,6 +32,30 @@ public class ClientControl extends JFrame {
       super("jUNO Client");
       frame = this;
       setLayout(new BoxLayout(getContentPane(),BoxLayout.X_AXIS));
+      //MENU BAR CONSTRUCT
+      JMenuBar jmb = new JMenuBar();
+      JMenu jm = new JMenu("Help");
+      JMenuItem jmiHowToPlay = new JMenuItem("How to Play");
+      JMenuItem jmiAbout = new JMenuItem("About jUNO");
+      jmiRefresh = new JMenuItem("Refresh");
+      jmiHowToPlay.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent ae) {
+            ShowRules t = new ShowRules();
+            t.start();
+         }
+      });
+      jmiAbout.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent ae) {
+            ShowAbout t = new ShowAbout();
+            t.start();
+         }
+      });
+      jm.add(jmiHowToPlay);
+      jm.add(jmiAbout);
+      jm.add(jmiRefresh);
+      jmb.add(jm);
+      setJMenuBar(jmb);
+      //SIDEBAR LAYOUT CONSTRUCT
       JPanel sidebar = new JPanel(new GridLayout(2,1));
       plp = new PlayerListPanel();
       chatTabs = new JTabbedPane();
@@ -67,15 +92,16 @@ public class ClientControl extends JFrame {
       mainLayout.add(jpRow1);
       mainLayout.add(jpRow2);
       mainLayout.add(jpHand);
-
-
+      //Add sidebar and main
       add(mainLayout);
       add(sidebar);
       pack();
       setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       setVisible(true);
+      //Start connecting to the server
       try {
-         Socket s = new Socket("172.101.242.195",12345);
+         String loc = JOptionPane.showInputDialog(null, "Enter server IP");
+         Socket s = new Socket(loc,12345);
          cc = new ClientCommunicator(s);
          cc.start();
          System.out.println("Conntected");
@@ -92,7 +118,7 @@ public class ClientControl extends JFrame {
    
    /**
      * helper method
-     * clear the alert box after X seconds
+     * clear the hMan alert box after X seconds
      */
    public class AlertClearer extends TimerTask {
       public void run() {
@@ -102,10 +128,9 @@ public class ClientControl extends JFrame {
    
    /**
      * helper method
-     * update player cards
+     * updatePlayerCards - Updates the 'PlayerCards' which display hand counts for everyone else at the table
      */
    public void updatePlayerCards(ArrayList<Player> players) {
-      System.out.println(players);
       plp.setList(players);
       switch(players.size()) {
          case 1:
@@ -133,12 +158,35 @@ public class ClientControl extends JFrame {
       playerPanelB.revalidate();
       playerPanelC.revalidate();
    }
-   
    /**
-  * ClientCommunicator - main point of communication to/from server
-  * @author - ngiano
-  * @version - 4.7.20
-  */
+     * ShowRules - Shows the rules in a new thread
+     */
+   public class ShowRules extends Thread {
+      public void run() {
+         JOptionPane.showMessageDialog(
+          frame, 
+          "<html><body><p style='width: 200px;'>Each player starts with 7 cards that are dealt by the dealer. The top card is taken off of the deck and placed face up on the table. A random player is chosen to start the game. To do so, this player must place a card from their hand on top of the deck. In order to be able to place a card down, the card must match either the color of the card on the top of the discard pile, the number of the card on the top of the discard pile, or be a wild card.</p><hr><p style='width: 200px;'>The deck includes a variety of card types. There are numbered cards ranging from 0 to 9 of red, blue, green, and yellow. Other cards include wild cards, draw 2, skips, draw 4, and reverse. A wild card allows the current player to change the current color and can be placed at any time. A draw 2 card is used to add two cards to the hand of the following player. A skip is used to skip over the next player. A draw 4 card allows the current player to change the color while simultaneously adding four cards to the hand of the next player. A reverse card changes the direction that turns follow.</p><hr><p style='width: 200px;'>The objective of the game is to empty one’s hand. Players add cards to the discard pile, taking turns trying to both get rid of their cards and add cards to the hands of their opponents. Once a player gets down to one card left in their hand, they must call out UNO before anyone else. If another player calls UNO before the player with one card left, that player must pick up two additional cards from the deck as a penalty. The first person to get rid of all of their cards wins the game.</p></body></html>", 
+          "How to Play", 
+          JOptionPane.QUESTION_MESSAGE);
+      }
+   }
+   /**
+     * ShowAbout - Shows the about dialog in a new thread
+     */
+   public class ShowAbout extends Thread {
+      public void run() {
+         JOptionPane.showMessageDialog(
+          frame, 
+          "<html><body><p style='width: 200px;'>jUNO by<br>Nick Giancursio<br>Collin Lavergne<br>Vicky Soler<br>Chelsey Miller</p></body></html>", 
+          "Credits", 
+          JOptionPane.QUESTION_MESSAGE);
+      }
+   }
+   /**
+   * ClientCommunicator - main point of communication to/from server, main thread
+   * @author - ngiano
+   * @version - 4.7.20
+   */
    class ClientCommunicator extends Thread {
       private Socket socket;
       private ObjectInputStream in = null;
@@ -147,7 +195,7 @@ public class ClientControl extends JFrame {
       private java.util.Timer t;      
       private boolean aborting = false;
       /**
-        * ServerClient - Create a new client with a blank player
+        * ClientCommunicator - Create a new client with a blank player
         * @param socket - Socket for this client
         */
       public ClientCommunicator(Socket socket) {
@@ -204,6 +252,13 @@ public class ClientControl extends JFrame {
                sendOut(new Message("CALLOUT"));
             }
          });
+         //Activate refresh
+         jmiRefresh.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+               sendOut(new Message("UPDATE"));
+            }
+         });
+         //Send shutdown signal to server to leave gracefully
          frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent we) {
                sendOut(new Message("ABORT"));
@@ -215,6 +270,7 @@ public class ClientControl extends JFrame {
          while (true) {
             Message msg = null;
             try {
+               //The server sends messages in a "Message" object exclusively
                msg = (Message) in.readObject();
             } catch (IOException ioe) {
                System.out.println("IO Error in reading client message");
@@ -229,7 +285,7 @@ public class ClientControl extends JFrame {
                   String sendee = (String)msg.getContent();
                   String message = (String)msg.getMoreContent();
                   //Execute
-                  System.out.println("chat "+sendee+" "+message);
+                  //Check if we have a panel for this sendee yet
                   boolean chatMatch = false;
                   for(ChatPanel chatP: chatPanels) {
                      if(chatP.getUsername().equals(sendee)) {
@@ -238,15 +294,18 @@ public class ClientControl extends JFrame {
                         chatMatch = true;
                      }
                   }
+                  //Create new chat panel and add the first message to it
                   if(!chatMatch) {
                      //create a new chat panel
                      ChatPanel chP = new ChatPanel(sendee);
                      chP.updateChat("Start of new chat with "+sendee+" ======");
                      chP.updateChat(message);
                      JButton sendButton = chP.getSendReference();
+                     //GAMELOG is read-only
                      if(sendee.equals("GAMELOG")) {
                         sendButton.setEnabled(false);
                      }
+                     //ActionListener that cues sending messages out to server
                      sendButton.addActionListener(new ActionListener(){
                         public void actionPerformed(ActionEvent ae) {
                            String input = chP.readInput();
@@ -255,6 +314,7 @@ public class ClientControl extends JFrame {
                               String tempTarget = input.substring(3);
                               String tempInput = tempTarget.substring(tempTarget.indexOf(" ")+1);
                               tempTarget = tempTarget.substring(0,tempTarget.indexOf(" "));
+                              //Look if target is a valid person to message
                               if(tempTarget.equals(p.getName())) {
                                  chP.updateChat("You cannot send a message to yourself");
                               } else {
@@ -269,18 +329,19 @@ public class ClientControl extends JFrame {
                                     chP.updateChat("Failed to send: There is no player by the username "+tempTarget);
                                  }
                               }
+                           //Not a direct message, send to user the chatpanel was made for
                            } else {
                               sendOut(new Message("CHAT",sendee,input));
                            }
                         }
                      });
+                     //Add to GUI, as a tab
                      chatPanels.add(chP);
                      chatTabs.addTab(sendee,chP);
                   }
                   break;
-               case "TURN"://TURN - ASSOCIATED OBJECT: ArrayList<Card>
+               case "TURN"://TURN - ASSOCIATED OBJECT: none
                   //It's now this client's turn, allow playing/drawingcards
-                  //Server delivers hand, in case of any desync
                   //Execute
                   p.setTurn(true);
                   hMan.setPlay(true);
@@ -290,7 +351,6 @@ public class ClientControl extends JFrame {
                   //Process object
                   ArrayList<Card> hand2 = (ArrayList<Card>)msg.getContent();
                   //Execute
-                  System.out.println("handhand"+hand2);
                   hMan.setHand(hand2);
                   //Respond OK
                   sendOut(new Message("OK"));
@@ -302,7 +362,6 @@ public class ClientControl extends JFrame {
                   String note = (String)msg.getMoreContent();
                   hMan.setAlert(note.toString());
                   t.schedule(new AlertClearer(), 1000);
-                  System.out.println("handplus"+hand3);
                   hMan.setHand(hand3);
                   //Respond OK
                   sendOut(new Message("OK"));
@@ -321,12 +380,10 @@ public class ClientControl extends JFrame {
                   break;
                case "UPDATEALL"://RECIEVE UPDATE - ASSOCIATED OBJECT: Player[]???
                   //Update all players, names and card counts
-                  System.out.println("UPDATEALL TIME!");
                   ArrayList<Player> updateAllPlayerList = (ArrayList<Player>)msg.getContent();
                   userList = updateAllPlayerList;
                   Player me = null;
                   for(int i = 0; i < updateAllPlayerList.size(); i++) {
-                     System.out.println(updateAllPlayerList.get(i).getName() + " ("+updateAllPlayerList.get(i).getHandSize()+")");
                      if(updateAllPlayerList.get(i).getName().equals(p.getName())) {
                         me = updateAllPlayerList.get(i);
                      }
@@ -363,6 +420,7 @@ public class ClientControl extends JFrame {
                   hMan.setAlert(alert);
                case "WIN"://WIN - ASSOCIATED OBJECT: null
                   //Show the player that they won
+                  //Execute
                   JOptionPane.showMessageDialog(null,"You win!");
                   hMan.setAlert("Waiting for server to start new game");
                   break;
@@ -375,11 +433,13 @@ public class ClientControl extends JFrame {
                   hMan.setAlert("Waiting for server to start new game");
                   break;
                case "ABORT"://ABORT aka DISCONNECT - ASSOCIATED OBJECT: null
+                  //Inform user the server has been shutdown gracefully
                   //Execute
                   JOptionPane.showMessageDialog(null,"Server is shutting down");
                   System.exit(0);
                   break;
                case "GOODBYE":
+                  //Server responds "GOODBYE" when a client requests to disconnect
                   System.exit(0);
                   break;
                case "FAIL"://OK - this might honestly be it's own thing, but im putting it here so we know to add it later
@@ -389,17 +449,16 @@ public class ClientControl extends JFrame {
                   JOptionPane.showMessageDialog(null,"FAILURE "+ff);
                   break;
                case "OK":
+                  //Display an item on the alert bar
                   //Process Object
                   String oo = (String)msg.getContent();
                   //Execute
-                  System.out.println("ok msg: "+oo);
                   hMan.setAlert(oo);
                   if(oo.equals("New game started!")) {
                      p.setTurn(false);
                      hMan.setPlay(false);
                   }
                   if(oo.equals("Card Played")) {
-                     System.out.println("Card played. Remove");
                      hMan.setPlay(false);
                      p.setTurn(false);
                      hMan.removeLastCardPlayed();
@@ -458,20 +517,34 @@ public class ClientControl extends JFrame {
          
          this.hand = hand;
       }
+      /**
+        * setAlert - Draw text on the alert bar, located above your hand
+        * @param alert - message to display
+        */
       public void setAlert(String alert) {
          jlAlert.setText(alert);
       }
+      /**
+        * clearAlert - Return to default alert, showing hand size
+        */
       public void clearAlert() {
          jlAlert.setText("You have "+hand.size()+" cards in your hand");
       }
+      /**
+        * setPlay - Switch the ability to click the "Play" button
+        */
       public void setPlay(boolean isEnabled) {
-         System.out.println("Play set to "+isEnabled);
          jbPlayCard.setEnabled(isEnabled);
       }
+      /**
+        * setLastCardPlayed - Storage for last card played in hand, used to remove from hand if server accepts card
+        */
       public void setLastCardPlayed(Card card) {
          lastCard = card;
-         System.out.println("Last card set to: "+card.toString());
       }
+      /**
+        * removeLastCardPlayed - Removes last card sent to be played from hand
+        */
       public void removeLastCardPlayed() {
          for(int i = 0; i < hand.size(); i++) {
             if(hand.get(i).compareTo(lastCard) == 0) {
@@ -480,20 +553,27 @@ public class ClientControl extends JFrame {
          }
          refresh();
       }
+      /**
+        * setHand - Set hand to be displayed, automatically refreshes UI
+        */
       public void setHand(ArrayList<Card> hand) {
          Collections.sort(hand);
          this.hand = hand;
          refresh();
       }
+      /**
+        * refresh - refreshes UI to show new hand, can not be run if it is currently being run
+        */
       public void refresh() {
          if(!hmanBusy) {
             RefreshHMAN t = new RefreshHMAN(jlistHand, hand);
             t.start();
             hmanBusy = true;
-         } else {
-            System.out.println("tried, but hman was busy!!");
          }
       }
+      /**
+        * RefreshHMAN - Thread to control UI drawing, has pauses on Vector creation because vectors are very syncronously sensitive
+        */
       private class RefreshHMAN extends Thread {
          private JList jlistHand;
          private final ArrayList<Card> REFHAND;
@@ -512,7 +592,6 @@ public class ClientControl extends JFrame {
                try{sleep(120);}catch(InterruptedException ie){}
                jlistHand.setModel(cardNames);
             } catch(NullPointerException idgaf) {
-               System.out.println(idgaf);
             } finally {
                synchronized("") {
                   hmanBusy = false;
@@ -521,6 +600,7 @@ public class ClientControl extends JFrame {
          }
       }
       //https://stackoverflow.com/questions/22266506/how-to-add-image-in-jlist
+      //Custom renderer to show cards
       private class UnoCardRenderer extends DefaultListCellRenderer {         
           public Component getListCellRendererComponent(JList list, Object value, int index,boolean isSelected, boolean cellHasFocus) {
               Card card = (Card)value;
