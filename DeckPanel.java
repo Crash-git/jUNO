@@ -27,7 +27,7 @@ public class DeckPanel extends JPanel {
       
       
       jlDiscard = new JLabel("DRAW");
-      jlDiscard.setIcon(new ImageIcon(getClass().getResource("resources/r_1.gif")));
+      jlDiscard.setIcon(new ImageIcon(getClass().getResource("resources/r_1.png")));
       jlDiscard.setHorizontalTextPosition(JLabel.CENTER);
       jlDiscard.setVerticalTextPosition(JLabel.BOTTOM);
       
