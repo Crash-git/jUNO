@@ -142,7 +142,11 @@ public class Card implements Cloneable, Comparable, Serializable {
          }
       }
    }
-   
+   /**
+     * get referenced card graphics for each card. Needed for jar compilation
+     * @param c Card to get graphic of
+     * @return ImageIcon graphic of the card
+     */
    public static ImageIcon getCardGraphic(Card c) {
       ClassLoader classLoader = ClassLoader.getSystemClassLoader();
       switch(c.getColor()) {

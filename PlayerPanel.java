@@ -60,7 +60,7 @@ public class PlayerPanel extends JPanel {
 
    /**
     * hardcodes the hand size pictures
-    * @param _handSize size of incomeing hand
+    * @param _handSize size of incoming hand
     * @return the correct icon
     */
    public ImageIcon getHandGraphic(int _handSize) {
