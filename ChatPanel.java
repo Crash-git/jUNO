@@ -20,6 +20,10 @@ public class ChatPanel extends JPanel {
    public static void main(String[]args) {
       new ChatPanel("T");
    }
+   /**
+     * ChatPanel - Create a chat panel with stored username
+     * @param _username - Username
+     */
    public ChatPanel(String _username) {
         setLayout(new BorderLayout());
 
@@ -46,7 +50,9 @@ public class ChatPanel extends JPanel {
         add(chatCombined, BorderLayout.CENTER);
         // sendMessage(username + " connected");
     }
-    //Read-only chat panel
+   /**
+     * ChatPanel - Construct a read-only panel
+     */
    public ChatPanel() {
         setLayout(new BorderLayout());
 
@@ -61,23 +67,38 @@ public class ChatPanel extends JPanel {
 
         add(scroll, BorderLayout.CENTER);
     }
-
+    
+    /**
+      * updateChat - Add a line to the chat
+      * @param readout - Line to add
+      */
     public void updateChat(String readout) {
         chat.append("\n" + readout);
     }
-
+    /**
+      * clearChat - Clears the chat
+      */
     public void clearChat() {
         chat.setText("");
     }
-
+   /**
+     * getUsername
+     * @return username - Username
+     */
     public String getUsername() {
         return username;
     }
-
+   /**
+     * getSendReference - Get reference to the send button, for adding action events
+     * @return send - JButton for sending
+     */
     public JButton getSendReference() {
         return send;
     }
-
+   /**
+     * readInput - Read the input that will be sent out
+     * @return input - Message to be sent out
+     */
     public String readInput() {
         String input = chatInput.getText();
         chatInput.setText("");

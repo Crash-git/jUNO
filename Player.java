@@ -32,7 +32,7 @@ public class Player implements Serializable {
    /**
      * Player - construct a player with a name, and a hand
      * @param name - Name
-     * @param hand - Hand of cards, ArrayList<Card>
+     * @param hand - Hand of cards, ArrayList Card
      */
    public Player(String name, ArrayList<Card> hand) {
       this.name = name;
@@ -52,24 +52,24 @@ public class Player implements Serializable {
    }
    
    /**
-     * setTurn - Sets if it's this player's turn or not
-     * @param boolean - isTurn
+     * setTurn Sets if it's this player's turn or not
+     * @param isTurn Boolean to set turn
      */
    public void setTurn(boolean isTurn) {
       this.isTurn = isTurn;
    }
    
    /**
-     * setUno - Sets if the player has pressed the Uno button
-     * @param boolean - isUno
+     * setUno Sets if the player has pressed the Uno button
+     * @param isUno Boolean to set if uno
      */
    public void setUno(boolean isUno) {
       this.isUno = isUno;
    }
    
    /**
-     * setName - Sets player display name
-     * @param string - name
+     * setName Sets player display name
+     * @param name Name of player
      */
    public void setName(String name) {
       this.name = name;
@@ -77,47 +77,47 @@ public class Player implements Serializable {
    
    /**
      * getTurn - Sees if it's this player's turn or not
-     * @returns boolean - isTurn
+     * @return boolean - isTurn
      */
    public boolean getTurn() {
       return isTurn;
    }
    
    /**
-     * getUno - Sees if the player has pressed the Uno button
-     * @returns boolean - isUno
+     * getUno Sees if the player has pressed the Uno button
+     * @return boolean -isUno
      */
    public boolean getUno() {
       return isUno;
    }
    
    /**
-     * getName - Gets player display name
-     * @returns string - name
+     * getName Gets player display name
+     * @return string - name
      */
    public String getName() {
       return name;
    }
    
    /**
-     * getHandSize - Get the size (remaining cards) of a player's hand
-     * @returns int - Size of hand
+     * getHandSize Get the size (remaining cards) of a player's hand
+     * @return int - Size of hand
      */
    public int getHandSize() {
       return hand.size();
    }
    
    /**
-     * getHand - Get the player's hand
-     * @returns Cards - hand
+     * getHand Get the player's hand
+     * @return Cards - hand
      */
    public ArrayList<Card> getHand() {
       return hand;
    }
    
    /**
-     * setHand - Set the player's hand
-     * @param Cards - hand
+     * setHand Set the player's hand
+     * @param hand Arraylist of cards to set as player's hand
      */
    public void setHand(ArrayList<Card> hand) {
       this.hand = hand;
@@ -125,14 +125,17 @@ public class Player implements Serializable {
          isUno = false;
       }
    }
+   /**
+     * setHand Clear the player's hand
+     */
    public void setHand() {
       this.hand = new ArrayList<Card>();
    }
    
    /**
-     * play - Play a card, removing it from the player's hand and returning it
-     * @param index - Index of the card in the hand
-     * @returns Card - Card selected
+     * play Play a card, removing it from the player's hand and returning it
+     * @param index Index of the card in the hand
+     * @return Card - Card selected
      */
    public Card play(int index) {
        Card playedCard = null;
@@ -146,8 +149,8 @@ public class Player implements Serializable {
    }
    
    /**
-     * add - Add a card to the player's hand
-     * @param card - Card to be added
+     * add Add a card to the player's hand
+     * @param card Card to be added
      */
    public void add(Card card) {
       hand.add(card);

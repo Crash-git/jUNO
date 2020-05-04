@@ -89,6 +89,8 @@ public class Deck implements Serializable {
    }
    /**
      * verify - Verify if a card can be played on the top of a deck
+     * @param card - Card to verify
+     * @return if it matches rules
      */
    public boolean verify(Card card) {
       Card topCard = cards.get(0);
@@ -102,6 +104,7 @@ public class Deck implements Serializable {
    }
    /**
      * insert - Insert a new card, adding it to the top of the deck
+     * @param card - Card to insert
      */
    public void insert(Card card) {
       cards.add(0, card);
@@ -119,7 +122,7 @@ public class Deck implements Serializable {
    }
    /**
      * deal - Deal the deck to a single player
-     * @param Player
+     * @param player Player to deal to
      */
    public void deal(Player player) {
       for(int i = 0; i < 7; i++) {
@@ -128,12 +131,14 @@ public class Deck implements Serializable {
    }
    /**
      * getCards  - Return the card deck
+     * @return the deck
      */
    public ArrayList<Card> getCards() {
       return cards;
    }
    /**
      * setCards  - Set the card deck
+     * @param cards - ArrayList of cards to set the deck to be
      */
    public void setCards(ArrayList<Card> cards) {
       this.cards = cards;

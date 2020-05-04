@@ -5,7 +5,11 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock; 
-
+/**
+  * ClientControl - Main control unit for client, builds GUI, handles messages from server
+  * @author ngiano
+  * iste121
+  */
 public class ClientControl extends JFrame {
    //GUI
    private JFrame frame;
@@ -27,7 +31,9 @@ public class ClientControl extends JFrame {
    public static void main(String[] args) {
       new ClientControl();
    }
-   
+   /**
+     * ClientControl - Main control unit for client, builds GUI
+     */
    public ClientControl() {
       super("jUNO Client");
       frame = this;
@@ -129,6 +135,7 @@ public class ClientControl extends JFrame {
    /**
      * helper method
      * updatePlayerCards - Updates the 'PlayerCards' which display hand counts for everyone else at the table
+     * @param players - ArrayList of players to show
      */
    public void updatePlayerCards(ArrayList<Player> players) {
       plp.setList(players);
@@ -474,7 +481,7 @@ public class ClientControl extends JFrame {
       /**
         * sendOut - Send out a message to the client on the other end
         * @param msg - Message object containing the message
-        * @returns boolean - Successfully sent message
+        * @return boolean - Successfully sent message
         */
       public boolean sendOut(Message msg) {
          try {
@@ -498,6 +505,9 @@ public class ClientControl extends JFrame {
       private boolean hmanBusy = false;
       private Card lastCard;
       final DefaultListModel<Card> cardNames = new DefaultListModel<Card>();
+      /**
+        * Create a new handmanager
+        */
       HandManager() {
          setLayout(new BorderLayout());
          
@@ -532,12 +542,14 @@ public class ClientControl extends JFrame {
       }
       /**
         * setPlay - Switch the ability to click the "Play" button
+        * @param isEnabled - Switch for playing
         */
       public void setPlay(boolean isEnabled) {
          jbPlayCard.setEnabled(isEnabled);
       }
       /**
         * setLastCardPlayed - Storage for last card played in hand, used to remove from hand if server accepts card
+        * @param card - card to be set for last played
         */
       public void setLastCardPlayed(Card card) {
          lastCard = card;
@@ -555,6 +567,7 @@ public class ClientControl extends JFrame {
       }
       /**
         * setHand - Set hand to be displayed, automatically refreshes UI
+        * @param hand - ArrayList of cards to display
         */
       public void setHand(ArrayList<Card> hand) {
          Collections.sort(hand);
